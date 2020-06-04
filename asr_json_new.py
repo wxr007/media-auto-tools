@@ -95,6 +95,27 @@ def fetch_token():
 
 """  TOKEN end """
 
+#毫秒换算 根据需要只到分
+def ms2s(ms):
+    mspart=ms%1000
+    mspart=str(mspart).zfill(3)
+    spart=(ms//1000)%60
+    spart=str(spart).zfill(2)
+    mpart=(ms//1000)//60
+    mpart=str(mpart).zfill(2)
+    #srt的时间格式
+    stype="00:"+mpart+":"+spart+","+mspart
+    return stype
+
+'''
+def format_time(ms):
+    # ms = millisecond%1000
+    # second = millisecond/1000
+    # hour = millisecond/
+    td = datetime.timedelta(milliseconds= ms)
+    return str(td).replace('.',',')
+'''
+
 def asr_raw(speech_data, token):
     length = len(speech_data)
     if length == 0:
@@ -141,11 +162,11 @@ def gen_srt(srt_file,sound,timestamp_list,token):
         # print("rst is ", rst['err_no'][0])
         
         if result['err_no'] == 0:
-            text.append('{0}\n{1} --> {2}\n'.format(idx, format_time(timestamp_list[i][0]/ 1000), format_time(timestamp_list[i][1]/ 1000)))
+            text.append('{0}\n{1} --> {2}\n'.format(idx, ms2s(timestamp_list[i][0]), ms2s(timestamp_list[i][1])))
             text.append( result['result'][0])
             text.append('\n')
             idx = idx + 1
-            print(format_time(timestamp_list[i][0]/ 1000), "txt is ", result['result'][0])
+            print(ms2s(timestamp_list[i][0]), "txt is ", result['result'][0])
 
     with open(srt_file,"r+") as f:
         f.writelines(text)
